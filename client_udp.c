@@ -13,11 +13,12 @@
 #include <netdb.h>
 
 #define SERVER_PORT 5432
-#define BUF_SIZE 4096
+// #define BUF_SIZE 4096
 
-int main(int argc, char *argv[])
+int main(int argc, char **argv)
 {
-
+  int bufSize = atoi(argv[2]); // To convert char to int
+  // bufSize /= 1000; // Convert into Kilo Bytes
   FILE *inputFile = fopen("RecievedFile.mp4", "wb");
   int bytesread;
   FILE *fp;
@@ -25,10 +26,14 @@ int main(int argc, char *argv[])
   struct sockaddr_in sin;
   socklen_t length;
   char *host;
-  char buf[BUF_SIZE];
+  char buf[bufSize];
   int s;
   int len;
-
+  if (argc < 3)
+  {
+    printf("Please provide 2 additional arguments : Host name & Payload size  \n");
+    return 0;
+  }
   if ((argc == 2) || (argc == 3))
   {
     host = argv[1];
@@ -39,15 +44,15 @@ int main(int argc, char *argv[])
     exit(1);
   }
 
-  if (argc == 3)
-  {
-    fp = fopen(argv[2], "w");
-    if (fp == NULL)
-    {
-      fprintf(stderr, "Error opening output file\n");
-      exit(1);
-    }
-  }
+  // if (argc == 3)
+  // {
+  //   fp = fopen(argv[2], "w");
+  //   if (fp == NULL)
+  //   {
+  //     fprintf(stderr, "Error opening output file\n");
+  //     exit(1);
+  //   }
+  // }
 
   /* translate host name into peer's IP address */
   hp = gethostbyname(host);
@@ -77,7 +82,7 @@ int main(int argc, char *argv[])
 
   /* send message to server */
   fgets(buf, sizeof(buf), stdin);
-  buf[BUF_SIZE - 1] = '\0';
+  buf[bufSize - 1] = '\0';
   len = strlen(buf) + 1;
   if (sendto(s, buf, len, 0, (const struct sockaddr *)&sin, sizeof(sin)) < 0)
   {

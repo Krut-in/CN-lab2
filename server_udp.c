@@ -14,19 +14,26 @@
 #include <time.h>
 
 #define SERVER_PORT 5432
-#define BUF_SIZE 4096
+// #define BUF_SIZE 4096
 
-int main(int argc, char *argv[])
+int main(int argc, char **argv)
 {
+  if (argc < 3)
+  {
+    printf("Please provide 2 additional arguments : Payload size & delay in nanoseconds \n");
+    return 0;
+  }
   struct timespec tim, tim2;
   tim.tv_sec = 1;
-  tim.tv_nsec = 10;
+  tim.tv_nsec = atoi(argv[2]);
 
   struct sockaddr_in sin;
   struct sockaddr_storage client_addr;
   char clientIP[INET_ADDRSTRLEN]; /* For IPv4 addresses */
   socklen_t client_addr_len;
-  char buf[BUF_SIZE];
+  int bufSize = atoi(argv[1]);
+  // bufSize /= 1000; // Convert into Kilo Bytes
+  char buf[bufSize];
   // char GETFOUND[BUF_SIZE] = "File is Sent!\n";
   int len;
   int s;
@@ -34,13 +41,14 @@ int main(int argc, char *argv[])
   struct hostent *hp;
 
   // Declarations for file(s) to be sent
+  // Relative location of the file
   FILE *videoFile = fopen("./Files/Our Story in 1 Minute.mp4", "rb");
 
   /* For inserting delays, use nanosleep()
      struct timespec ... */
 
   /* To get filename from commandline */
-  /* if (argc==...) {} */
+  /* if (argc==...) {} 3rd argument as file name */
 
   /* Create a socket */
   if ((s = socket(PF_INET, SOCK_DGRAM, 0)) < 0)
@@ -132,3 +140,5 @@ int main(int argc, char *argv[])
   sendto(s, buf, sizeof(buf), 0,
          (struct sockaddr *)&client_addr, client_addr_len);
 }
+
+// vlc /Users/krutinrahtod/Downloads/Wishlist.mkv
