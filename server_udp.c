@@ -1,6 +1,6 @@
 /* CSD 304 Computer Networks, Fall 2016
    Lab 2, server
-   Team:
+   Team: KR
 */
 
 #include <stdio.h>
